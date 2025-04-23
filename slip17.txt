@@ -1,0 +1,61 @@
+1.
+const { MongoClient } = require("mongodb");
+const uri = "mongodb://127.0.0.1:27017";
+const client = new MongoClient(uri);
+async function insertrecords() {
+    try {
+        console.log("Connecting to MongoDB...");
+        await client.connect();
+        console.log("MongoDB connection successful!");
+
+        const db = client.db("mydb"); 
+        const collection = db.collection("customer"); 
+
+        const record = [
+            { name: "snehal", email: "snehal@example.com" },
+            { name: "rutuja", email: "rutuja@example.com" },
+            { name: "rudra", email: "rudra@example.com" }
+        ];
+        const res = await collection.insertMany(record);
+        console.log("Records inserted:", res);
+    } catch (err) {
+        console.error("MongoDB operation failed:", err);
+    } finally {
+        await client.close();
+        console.log("Connection closed");
+    }
+}
+insertrecords();
+
+2.
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head>
+  <script src="angular.min.js"></script>
+</head>
+<body>
+
+  <div ng-controller="OneWayCtrl">
+    <h4>One-way</h4>
+    <p>{{msg}}</p>
+    <input type="text" value="{{msg}}">
+  </div>
+
+  <div ng-controller="TwoWayCtrl">
+    <h4>Two-way</h4>
+    <input ng-model="name">
+    <p>{{name}}</p>
+  </div>
+
+  <script>
+    angular.module('myApp', [])
+      .controller('OneWayCtrl', function($scope) {
+        $scope.msg = "Hello One-way";
+      })
+      .controller('TwoWayCtrl', function($scope) {
+        $scope.name = "John";
+      });
+  </script>
+
+</body>
+</html>

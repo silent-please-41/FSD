@@ -1,0 +1,58 @@
+1.
+const { MongoClient } = require("mongodb");
+
+const uri = "mongodb://127.0.0.1:27017"; // MongoDB connection URI
+const client = new MongoClient(uri);
+
+async function insertRecords() {
+    try {
+        console.log("Connecting to MongoDB...");
+        await client.connect();
+        console.log("MongoDB connection successful!");
+
+        // Use 'movie' database
+        const db = client.db("movie");
+
+        // Create or access 'movies' collection
+        const collection = db.collection("movies");
+
+        // Movie documents to insert
+        const records = [
+            { title: "Inception", director: "Christopher Nolan", year: 2010 },
+            { title: "The Matrix", director: "The Wachowskis", year: 1999 },
+            { title: "Interstellar", director: "Christopher Nolan", year: 2014 }
+        ];
+
+        // Insert records into the collection
+        const res = await collection.insertMany(records);
+        console.log("Records inserted:", res.insertedCount);
+    } catch (err) {
+        console.error("MongoDB operation failed:", err);
+    } finally {
+        await client.close();
+        console.log("Connection closed");
+    }
+}
+insertRecords();
+
+2.
+const EventEmitter = require('events');
+const eventEmitter = new EventEmitter();
+const eventHandler = (eventData)=>{
+    console.log(`Event received: ${eventData}` );
+};
+
+eventEmitter.on('customEvent',eventHandler);
+console.log("Event-driven application started.....");
+const eventInterval = setInterval(()=>{
+    const timestamp = new Date().toLocaleTimeString();
+    console.log("Emittting events....");
+    eventEmitter.emit('customEvent',`triggered at ${timestamp} `);
+
+},2000);
+setTimeout(()=>{
+    console.log("REmoving event Listner...");
+    eventEmitter.off('customEvent',eventHandler);
+    clearInterval(eventInterval);
+    console.log("No event will be triggered");
+},2000);

@@ -1,0 +1,98 @@
+1.
+function add(a,b){
+    return a+b;
+}
+function sub(a,b){
+    return a-b;
+}
+function multi(a,b){
+    return a*b;
+}
+function div(a,b){
+    return a/b;
+}
+module.exports={
+    add,
+    sub,
+    multi,
+    div
+};
+
+const http=require('http');
+const fs=require('./module1');
+const a=5;
+const b=10;
+http.createServer((req,res)=>{
+    res.write('addition is:'+fs.add(a,b)+'\n');
+    
+    res.write('sub is:'+fs.sub(a,b)+'\n');
+    res.write('multi is:'+fs.multi(a,b)+'\n');
+    res.write('div is:'+fs.div(a,b)+'\n');
+   res.end();
+}).listen(2006);
+2.
+<!DOCTYPE html>
+<html ng-app="validationApp">
+<head>
+  <meta charset="utf-8">
+  <title>Simple Validation SPA</title>
+  <script src="angular.min.js"></script>
+</head>
+<body ng-controller="MainController">
+  <h2>User Form</h2>
+  <form ng-submit="validate()">
+    Name:
+    <input type="text" ng-model="user.name"><br><br>
+    Mobile Number:
+    <input type="text" ng-model="user.mobile"><br><br>
+    Pin Code:
+    <input type="text" ng-model="user.pincode"><br><br>
+    Email:
+    <input type="text" ng-model="user.email"><br><br>
+    Address:
+    <input type="text" ng-model="user.address"><br><br>
+    <button type="submit">Submit</button>
+  </form>
+
+  <p style="color:green" ng-show="message">{{message}}</p>
+
+  <script>
+    angular.module('validationApp', [])
+    .controller('MainController', function($scope) {
+      $scope.user = {};
+      $scope.message = "";
+
+      $scope.validate = function() {
+        const name = $scope.user.name || "";
+        const mobile = $scope.user.mobile || "";
+        const pincode = $scope.user.pincode || "";
+        const email = $scope.user.email || "";
+        const address = $scope.user.address || "";
+
+        if (!/^[a-zA-Z\s]+$/.test(name)) {
+          alert("Name should contain characters only.");
+          return;
+        }
+        if (!/^\d{10}$/.test(mobile)) {
+          alert("Mobile number should be 10 digits.");
+          return;
+        }
+        if (!/^\d{6}$/.test(pincode)) {
+          alert("Pin code should be 6 digits.");
+          return;
+        }
+        if ((email.match(/@/g) || []).length !== 1 || (email.match(/\./g) || []).length !== 1) {
+          alert("Email must contain only one '@' and one '.'");
+          return;
+        }
+        if (address.trim() !== "SPPU M.Sc. Computer Science Syllabus 2023-24") {
+          alert("Address must be: SPPU M.Sc. Computer Science Syllabus 2023-24");
+          return;
+        }
+
+        $scope.message = "Validation successful!";
+      };
+    });
+  </script>
+</body>
+</html>

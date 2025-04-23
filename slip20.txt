@@ -1,0 +1,76 @@
+1.
+<!DOCTYPE html>
+<html ng-app>
+<head>
+  <title>AngularJS Directives Demo</title>
+  <script src="angular.min.js"></script>
+</head>
+<body>
+<h2>Directives Demo</h2>
+<div ng-init="firstName='MIT'; lastName='ACSC'">
+  <p>First Name: {{firstName}}</p>
+  <p>Last Name: {{lastName}}</p>
+</div>
+<p>Enter Name: <input ng-model="myname"></p>
+<p>Hello, {{myname}}</p>
+<div ng-init="students=['Ram','Amit','Shiv']">
+  <p>Students:</p>
+  <ul>
+    <li ng-repeat="s in students">{{s}}</li>
+  </ul>
+</div>
+<p>10 + 5 = <span ng-bind="10 + 5"></span></p>
+<p>Mobile No: <input ng-model="mobile"><br>
+My Mobile No is <span ng-bind="mobile"></span></p>
+</body>
+</html>
+2.
+const express = require('express');
+const { MongoClient } = require('mongodb');
+const app = express();
+const uri = "mongodb://127.0.0.1:27017";
+const client = new MongoClient(uri);
+
+app.get('/', (req, res) => {
+  res.send("Welcome to Student App");
+});
+
+// Create student (GET for easy testing)
+app.get('/add', async (req, res) => {
+  try {
+    await client.connect();
+    const db = client.db("college");
+    const collection = db.collection("students");
+    const data = { name: "Snehal", roll: 1 };
+    const result = await collection.insertOne(data);
+    res.send("Student added: " + result.insertedId);
+  } finally {
+    await client.close();
+  }
+});
+
+// Update student dynamically from query
+app.get('/update', async (req, res) => {
+  const { name, roll } = req.query;
+  if (!name || !roll) return res.send("Please provide both name and roll like ?name=Snehal&roll=3");
+
+  try {
+    await client.connect();
+    const db = client.db("college");
+    const collection = db.collection("students");
+
+    const result = await collection.updateOne(
+      { name: name },
+      { $set: { roll: parseInt(roll) } }
+    );
+    res.send(`Updated: ${result.modifiedCount} record(s)`);
+  } catch (err) {
+    res.send("Error: " + err);
+  } finally {
+    await client.close();
+  }
+});
+
+app.listen(3000, () => {
+  console.log("Server running at http://localhost:3000");
+});

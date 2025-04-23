@@ -1,0 +1,59 @@
+1.
+const { MongoClient } = require("mongodb");
+const uri = "mongodb://127.0.0.1:27017";
+const client = new MongoClient(uri);
+
+async function run() {
+    try {
+        await client.connect();
+        const db = client.db("mydb");
+        const collection = db.collection("bank");
+        const records = await collection.find().toArray();
+        console.log("All Records:", records);
+        const result = await collection.deleteOne({ name: "snehal" });
+
+        console.log("Delete result:", result);
+    } catch (err) {
+        console.error(err);
+    } finally {
+        await client.close();
+    }
+}
+run();
+2.
+const express = require('express');
+const { MongoClient } = require('mongodb');
+const app = express();
+const uri = "mongodb://127.0.0.1:27017";
+const client = new MongoClient(uri);
+app.use(express.urlencoded({ extended: true }));
+app.get('/register', (req, res) => {
+  res.send(`
+    <h2>User Registration</h2>
+    <form method="POST" action="/register">
+      Name: <input type="text" name="name" required><br><br>
+      Email: <input type="email" name="email" required><br><br>
+      <button type="submit">Register</button>
+    </form>
+  `);
+});
+app.post('/register', async (req, res) => {
+  const { name, email } = req.body;
+
+  try {
+    await client.connect();
+    const db = client.db('userdb'); 
+    const collection = db.collection('users'); 
+
+    await collection.insertOne({ name, email });
+
+    res.send(`
+        <h3>Registered successfully!</h3>Name: ${name}<br>Email: ${email}`);
+  } catch (err) {
+    console.error('Error:', err);
+    res.status(500).send('Error saving user data.');
+  } finally {
+    await client.close(); 
+  }
+});
+app.listen(5000);

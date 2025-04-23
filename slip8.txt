@@ -1,0 +1,54 @@
+1.
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head>
+  <title>M.Sc (CS) Sem-II Syllabus</title>
+  <script src="angular.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-route.min.js"></script>
+  <script>
+    angular.module("myApp", ["ngRoute"])
+    .config(function($routeProvider) {
+      $routeProvider
+        .when("/", { template: "<h2>Welcome!</h2><p>Click a subject to view syllabus.</p>" })
+        .when("/ds", { template: "<h2>Data Structures</h2><p>Stacks, Queues, Trees, Graphs</p>" })
+        .when("/os", { template: "<h2>Operating Systems</h2><p>Processes, Scheduling, Memory</p>" })
+        .when("/dbms", { template: "<h2>DBMS</h2><p>SQL, Normalization, Transactions</p>" });
+    });
+  </script>
+</head>
+<body>
+
+  <h1>M.Sc (CS) Sem-II</h1>
+
+  <p>
+    <a href="#!/">Home</a> 
+    <a href="#!/ds">Data Structures</a> 
+    <a href="#!/os">Operating Systems</a> 
+    <a href="#!/dbms">DBMS</a>
+  </p>
+
+  <div ng-view></div>
+
+</body>
+</html>
+2.
+const { MongoClient } = require("mongodb");
+const uri = "mongodb://127.0.0.1:27017";
+const client = new MongoClient(uri);
+async function run() {
+    try {
+        await client.connect();
+        const db = client.db("mydb");
+        const collection = db.collection("customer");
+        const allCustomers = await collection.find().toArray();
+        console.log("All Customers:");
+        console.log(allCustomers);
+        const cust = await collection.find({ name: /^A/i }).toArray();
+        console.log("\nCustomers whose name starts with 'A':",cust);
+    } catch (err) {
+        console.error("Error:", err);
+    } finally {
+        await client.close();
+    }
+}
+run();

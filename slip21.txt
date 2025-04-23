@@ -1,0 +1,64 @@
+1.
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head>
+  <title>Student Table</title>
+  <script src="angular.min.js"></script>
+  <style>
+    table, th, td { border: 1px solid black; border-collapse: collapse;}
+    th { background-color: #f2f2f2; }
+  </style>
+</head>
+<body ng-controller="studentCtrl">
+  <h2>Student Details</h2>
+  <table>
+    <tr>
+      <th>Roll No</th>
+      <th>Name</th>
+    </tr>
+    <tr ng-repeat="s in students">
+      <td>{{s.roll}}</td>
+      <td>{{s.name}}</td>
+    </tr>
+  </table>
+
+  <script>
+    angular.module("myApp", [])
+      .controller("studentCtrl", function($scope) {
+        $scope.students = [
+          { roll: 1, name: "Ravi" },
+          { roll: 2, name: "Anita" },
+          { roll: 3, name: "Karan" },
+          { roll: 4, name: "Pooja" },
+          { roll: 5, name: "Vikas" },
+          { roll: 6, name: "Sneha" },
+          { roll: 7, name: "Raj" },
+          { roll: 8, name: "Simran" },
+          { roll: 9, name: "Aman" },
+          { roll: 10, name: "Divya" }
+        ];
+      });
+  </script>
+</body>
+</html>
+2.
+const EventEmitter = require('events');
+const eventEmitter = new EventEmitter();
+const eventHandler = (eventData)=>{
+    console.log(`Event received: ${eventData}` );
+};
+
+eventEmitter.on('customEvent',eventHandler);
+console.log("Event-driven application started.....");
+const eventInterval = setInterval(()=>{
+    const timestamp = new Date().toLocaleTimeString();
+    console.log("Emittting events....");
+    eventEmitter.emit('customEvent',`triggered at ${timestamp} `);
+
+},2000);
+setTimeout(()=>{
+    console.log("REmoving event Listner...");
+    eventEmitter.off('customEvent',eventHandler);
+    clearInterval(eventInterval);
+    console.log("No event will be triggered");
+},2000);

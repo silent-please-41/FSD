@@ -1,0 +1,78 @@
+1.
+const EventEmitter = require('events');
+const numberEmitter = new EventEmitter();
+
+numberEmitter.on('even', (num) => {
+  console.log(`${num} is even`);
+});
+
+numberEmitter.on('odd', (num) => {
+  console.log(`${num} is odd`);
+});
+      for (let i = 1; i <= 200; i++) {
+        if (i % 2 === 0) {
+          numberEmitter.emit('even', i);
+        } else {
+          numberEmitter.emit('odd', i);
+        }
+      }
+  2.
+const express = require('express');
+const { MongoClient } = require('mongodb');
+const app = express();
+
+// MongoDB connection URI
+const uri = "mongodb://127.0.0.1:27017";
+const client = new MongoClient(uri);
+
+app.get('/', async (req, res) => {
+    try {
+        await client.connect();
+        const db = client.db('bankdb'); // Your Database name
+        const collection = db.collection('banks'); // Your Collection name
+
+        const data = await collection.find().toArray();
+
+        // Build HTML
+        let html = `
+            <html>
+            <head>
+                <title>Bank Details</title>
+              <style>table{border-collapse:collapse;}th,td{border:1px solid #000;}</style>
+            </head>
+            <body>
+                <h2>Bank Details</h2>
+                <table>
+                    <tr>
+                        <th>Bank No</th>
+                        <th>Bank Name</th>
+                        <th>Address</th>
+                        <th>IFSC Code</th>
+                    </tr>`;
+
+        data.forEach(bank => {
+            html += `
+                    <tr>
+                        <td>${bank.bankNo}</td>
+                        <td>${bank.bankName}</td>
+                        <td>${bank.address}</td>
+                        <td>${bank.ifscCode}</td>
+                    </tr>`;
+        });
+
+        html += `
+                </table>
+            </body>
+            </html>`;
+
+        res.send(html);
+
+    } catch (err) {
+        console.error('Error:', err);
+        res.status(500).send("An error occurred while fetching bank details.");
+    } finally {
+        await client.close();
+    }
+});
+
+app.listen(8080);

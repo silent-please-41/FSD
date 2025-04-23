@@ -1,0 +1,78 @@
+1.
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head>
+  <title>Show Page Location</title>
+  <script src="angular.min.js"></script>
+</head>
+<body ng-controller="MainController">
+
+  <h2>Current Page Location:</h2>
+  <p>{{ pageUrl }}</p>
+
+  <script>
+    var app = angular.module('myApp', []);
+    app.controller('MainController', function($scope, $location) {
+      $scope.pageUrl = $location.absUrl();
+    });
+  </script>
+
+</body>
+</html>
+2.
+const express = require('express');
+const { MongoClient } = require('mongodb');
+const app = express();
+
+// MongoDB connection URI
+const uri = "mongodb://127.0.0.1:27017";
+const client = new MongoClient(uri);
+
+app.get('/', async (req, res) => {
+    try {
+        await client.connect();
+        const db = client.db('shopdb'); // Your Database name
+        const collection = db.collection('products'); // Your Collection name
+
+        const data = await collection.find().toArray();
+        let html = `
+            <html>
+            <head>
+                <title>Product Details</title>
+        <style>table{border-collapse:collapse;}th,td{border:1px solid #000;}</style>
+            </head>
+            <body>
+                <h2>Product Details</h2>
+                <table>
+                    <tr>
+                        <th>Product ID</th>
+                        <th>Product Name</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                    </tr>`;
+
+        data.forEach(product => {
+            html += `
+                    <tr>
+                        <td>${product.productId}</td>
+                        <td>${product.productName}</td>
+                        <td>${product.category}</td>
+                        <td>${product.price}</td>
+                    </tr>`;
+        });
+
+        html += `
+                </table>
+            </body>
+            </html>`;
+
+        res.send(html);
+
+    } catch (err) {
+        console.error('Error:', err);
+        res.status(500).send("An error occurred while fetching product details.");
+    } finally {
+        await client.close();
+    }
+});
+app.listen(8050);

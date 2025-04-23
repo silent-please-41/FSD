@@ -1,0 +1,58 @@
+1.
+const { MongoClient } = require("mongodb");
+
+const uri = "mongodb://127.0.0.1:27017"; // MongoDB connection URI
+const client = new MongoClient(uri);
+
+async function insertRecords() {
+    try {
+        console.log("Connecting to MongoDB...");
+        await client.connect();
+        console.log("MongoDB connection successful!");
+
+        // Use 'college' database
+        const db = client.db("college");
+
+        // Create or access 'students' collection
+        const collection = db.collection("students");
+
+        // Student documents to insert
+        const records = [
+            { name: "Snehal", email: "snehal@example.com", course: "Computer Science" },
+            { name: "Rutuja", email: "rutuja@example.com", course: "Electronics" },
+            { name: "Rudra", email: "rudra@example.com", course: "Mechanical" }
+        ];
+
+        // Insert records into the collection
+        const res = await collection.insertMany(records);
+        console.log("Records inserted:", res.insertedCount);
+    } catch (err) {
+        console.error("MongoDB operation failed:", err);
+    } finally {
+        await client.close();
+        console.log("Connection closed");
+    }
+}
+
+insertRecords();
+2.
+• module.js file:
+exports.getDateTime = () => {
+const currentDate = new Date();
+return {
+date: currentDate.toLocaleDateString(),
+time: currentDate.toLocaleTimeString()
+};
+};
+• server.js file:
+const http = require('http');
+const { getDateTime } = require('./module');
+http.createServer((req, res) => {
+res.writeHead(200, { 'Content-Type': 'text/html' });
+const { date, time } = getDateTime();
+res.write(`Current Date: ${date} <br>`);
+res.write(`Current Time: ${time} <br>`);
+res.end();
+}).listen(7777, () => {
+console.log('Server running at localhost:7777');
+});

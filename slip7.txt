@@ -1,0 +1,64 @@
+1.
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head>
+  <title>Student Table</title>
+  <script src="angular.min.js"></script>
+  <style>
+    table, th, td { border: 1px solid black; border-collapse: collapse;}
+    th { background-color: #f2f2f2; }
+  </style>
+</head>
+<body ng-controller="studentCtrl">
+  <h2>Student Details</h2>
+  <table>
+    <tr>
+      <th>Roll No</th>
+      <th>Name</th>
+    </tr>
+    <tr ng-repeat="s in students">
+      <td>{{s.roll}}</td>
+      <td>{{s.name}}</td>
+    </tr>
+  </table>
+
+  <script>
+    angular.module("myApp", [])
+      .controller("studentCtrl", function($scope) {
+        $scope.students = [
+          { roll: 1, name: "Ravi" },
+          { roll: 2, name: "Anita" },
+          { roll: 3, name: "Karan" },
+          { roll: 4, name: "Pooja" },
+          { roll: 5, name: "Vikas" },
+          { roll: 6, name: "Sneha" },
+          { roll: 7, name: "Raj" },
+          { roll: 8, name: "Simran" },
+          { roll: 9, name: "Aman" },
+          { roll: 10, name: "Divya" }
+        ];
+      });
+  </script>
+</body>
+</html>
+
+2.
+const express = require('express');
+const path = require('path');
+const app = express();
+app.get('/download', (req, res) => {
+  const fp = path.join(__dirname, 'sample.txt'); 
+  res.download(fp, 'yourfile.txt', (err) => {
+    if (err) {
+      console.error('Download error:', err);
+      res.status(500).send('File download failed.');
+    }
+  });
+});
+app.get('/', (req, res) => {
+  res.send(`
+    <h2>Download File</h2>
+    <a href="/download">Click here to download the file</a>
+  `);
+});
+app.listen(3000);

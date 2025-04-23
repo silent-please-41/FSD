@@ -1,0 +1,81 @@
+1.
+const http = require('http');
+const fs = require('fs'); 
+http.createServer((req, res) => {
+    fs.readFile("a.txt", "utf-8", (err, data) => {
+        if (err) {
+            res.writeHead(404, { 'Content-Type': 'text/plain' });
+            res.end("404 error");
+        } else {
+            res.writeHead(200, { 'Content-Type': 'text/plain' });
+            res.end(data);
+        }
+    });
+}).listen(3000);
+2.
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head>
+    <meta charset="UTF-8">
+    <title>Product Form</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <style>
+        .error { color: red; }
+        .success { color: green; font-weight: bold; }
+    </style>
+</head>
+<body ng-controller="myCtrl">
+
+    <h2>Product Entry Form</h2>
+
+    <form name="myForm" ng-submit="save()" novalidate>
+
+        <!-- Product Name -->
+        <label>Product Name:</label><br>
+        <input type="text" name="pname" ng-model="pname"
+               ng-pattern="/^[a-zA-Z ]*$/"
+               required>
+        <div class="error" ng-show="myForm.pname.$touched && myForm.pname.$invalid">
+            <span ng-show="myForm.pname.$error.required">Name is required.</span>
+            <span ng-show="myForm.pname.$error.pattern">Only letters and spaces allowed.</span>
+        </div>
+        <br>
+
+        <!-- Product Price -->
+        <label>Price (₹):</label><br>
+        <input type="number" name="pprice" ng-model="pprice"
+               min="100" max="10000"
+               required>
+        <div class="error" ng-show="myForm.pprice.$touched && myForm.pprice.$invalid">
+            <span ng-show="myForm.pprice.$error.required">Price is required.</span>
+            <span ng-show="myForm.pprice.$error.min || myForm.pprice.$error.max">
+                Price must be between ₹100 and ₹10,000.
+            </span>
+        </div>
+        <br>
+
+        <button type="submit" ng-disabled="myForm.$invalid">Add Product</button>
+    </form>
+
+    <p class="success" ng-show="message">Product added successfully!</p>
+
+    <script>
+        var app = angular.module("myApp", []);
+        app.controller("myCtrl", function($scope) {
+            $scope.pname = "";
+            $scope.pprice = "";
+            $scope.message = false;
+
+            $scope.save = function() {
+                if ($scope.myForm.$valid) {
+                    $scope.message = true;
+                    $scope.pname = "";
+                    $scope.pprice = "";
+                    $scope.myForm.$setPristine();
+                    $scope.myForm.$setUntouched();
+                }
+            };
+        });
+    </script>
+</body>
+</html>

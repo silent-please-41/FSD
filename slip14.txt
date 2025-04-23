@@ -1,0 +1,74 @@
+1.
+const http = require('http');
+const fs = require('fs');
+const url = require('url');
+http.createServer((req, res) => {
+  const q = url.parse(req.url, true);
+  if (req.url === '/') {
+    res.writeHead(200, { 'Content-Type': 'text/html' });
+    res.end(`
+      <form action="/submit" method="get">
+        File 1: <input type="text" name="file1"><br>
+        File 2: <input type="text" name="file2"><br>
+        <button type="submit">Append</button>
+      </form>
+    `);
+  }
+  else if (q.pathname === '/submit') {
+    const f1 = q.query.file1;
+    const f2 = q.query.file2;
+    fs.readFile(f1, 'utf8', (err, data1) => {
+      if (err) return res.end('Cannot read File 1');
+      fs.appendFile(f2, data1, (err) => {
+        if (err) return res.end('Cannot write to File 2');
+        res.end('Content of File 1 appended to File 2 successfully!');
+      });
+    });
+  }
+}).listen(2400);
+console.log('Server running at http://localhost:2400');
+2.
+<!DOCTYPE html>
+<html ng-app="studentApp">
+<head>
+  <meta charset="utf-8">
+  <title>Marks Calculator</title>
+  <script src="angular.min.js"></script>
+</head>
+<body ng-controller="MarksController">
+
+  <h2>Student Marks</h2>
+
+  <form ng-submit="calculateMarks()">
+    <input type="number" ng-model="marks.sub1" placeholder="Sub 1" required /><br>
+    <input type="number" ng-model="marks.sub2" placeholder="Sub 2" required /><br>
+    <input type="number" ng-model="marks.sub3" placeholder="Sub 3" required /><br>
+    <input type="number" ng-model="marks.sub4" placeholder="Sub 4" required /><br>
+    <input type="number" ng-model="marks.sub5" placeholder="Sub 5" required /><br>
+    <button type="submit">Calculate</button>
+  </form>
+
+  <h3>Total: {{totalMarks}}</h3>
+  <h3>Average: {{averageMarks}}</h3>
+
+  <script>
+    angular.module('studentApp', [])
+      .service('MarksService', function() {
+        this.caltotal = function(marks) {
+          return marks.sub1 + marks.sub2 + marks.sub3 + marks.sub4 + marks.sub5;
+        };
+        this.calavg = function(total) {
+          return total / 5;
+        };
+      })
+      .controller('MarksController', function($scope, MarksService) {
+        $scope.marks = {}; // Initialize marks object
+        $scope.calculateMarks = function() {
+          var total = MarksService.caltotal($scope.marks);
+          $scope.totalMarks = total;
+          $scope.averageMarks = MarksService.calavg(total);
+        };
+      });
+  </script>
+</body>
+</html>

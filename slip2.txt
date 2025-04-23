@@ -1,0 +1,44 @@
+1.
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head>
+  <title>Current Date and Time</title>
+  <script src="angular.min.js"></script>
+</head>
+<body ng-controller="timeCtrl">
+  <h2>Current Date and Time</h2>
+  <p>{{ currentTime }}</p>
+  <script>
+    angular.module("myApp", [])
+      .controller("timeCtrl", function($scope, $interval) {
+        function updateTime() {
+          $scope.currentTime = new Date().toLocaleString();
+        }
+        updateTime(); 
+        $interval(updateTime, 1000);
+      });
+  </script>
+</body>
+</html>
+
+2.
+const { MongoClient } = require("mongodb");
+const uri = "mongodb://127.0.0.1:27017";
+const client = new MongoClient(uri);
+async function run() {
+    try {
+        await client.connect();
+        const db = client.db("mydb"); // Database name
+        const collection = db.collection("Teacher"); // Collection name
+        const allRecords = await collection.find().toArray();
+        console.log("All Teacher Records:",allRecords);
+        const highSalary = await collection.find({ salary: { $gt: 20000 } }).toArray();
+        console.log("\nTeachers with Salary > 20000:",highSalary);
+    } catch (err) {
+        console.error("Error:", err);
+    } finally {
+        await client.close();
+    }
+}
+run();
+

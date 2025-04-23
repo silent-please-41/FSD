@@ -1,0 +1,41 @@
+1.
+const http =require('http');
+const str ="Full Stack";
+http.createServer((req,res)=>{
+    const newsttr=str.split('').reverse().join('');
+    res.write(`${newsttr} \n`);
+    const n1=str.toUpperCase();
+    res.write(`${n1} \n`);
+    const n2=str.toLowerCase();
+    res.write(`${n2} \n`);
+    res.end();
+}).listen(3099);
+
+2.
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head>
+  <script src="angular.min.js"></script>
+</head>
+<body ng-controller="regCtrl">
+  <form name="form" ng-submit="submit()">
+    First Name: <input ng-model="fname" ng-pattern="/^[a-zA-Z]+$/" required><br>
+    Last Name: <input ng-model="lname" ng-pattern="/^[a-zA-Z]+$/" required><br>
+    Age: <input type="number" ng-model="age" min="18" max="50" required><br>
+    <button>Submit</button>
+  </form>
+  <p ng-show="form.$submitted && form.fname.$invalid">Enter valid First Name</p>
+  <p ng-show="form.$submitted && form.lname.$invalid">Enter valid Last Name</p>
+  <p ng-show="form.$submitted && form.age.$invalid">Age must be 18–50</p>
+  <h3 ng-show="greeting">Good {{greeting}}!</h3>
+  <script>
+    angular.module("myApp", []).controller("regCtrl", function($scope) {
+      let h = new Date().getHours();
+      $scope.greeting = h < 12 ? "Morning" : h < 17 ? "Afternoon" : "Evening";
+      $scope.submit = function () {
+        if ($scope.form.$valid) alert("Form Submitted");
+      };
+    });
+  </script>
+</body>
+</html>

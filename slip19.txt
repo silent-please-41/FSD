@@ -1,0 +1,57 @@
+1.
+const express = require('express');
+var app = express();
+app.use(express.urlencoded({ extended: true }));
+app.get('/', (req, res) => {
+  res.send(`
+    <form method="POST" action="/register">
+      Name: <input type="text" name="name"><br><br>
+      Email: <input type="email" name="email"><br><br>
+      Age: <input type="number" name="age"><br><br>
+      <button type="submit">Submit</button>
+    </form>
+  `);
+});
+app.post('/register', (req, res) => {
+  const { name, email, age } = req.body;
+  if (!name || !email || !age) {
+    return res.send("All fields are required.");
+  }
+  if (age < 18 || age > 65) {
+    return res.send("Age should be between 18 and 65.");
+  }
+  res.send(`Registered!<br>Name: ${name}<br>Email: ${email}<br>Age: ${age}`);
+});
+app.listen(5000);
+
+2.
+<!DOCTYPE html>
+<html ng-app="mathApp">
+<head>
+  <script src="angular.min.js"></script>
+</head>
+<body ng-controller="MathController">
+  <h2>Math Operations</h2>
+  
+  <input type="number" ng-model="num1">
+  <input type="number" ng-model="num2">
+  
+  <button ng-click="add()">Add</button>
+  <button ng-click="multiply()">Multiply</button>
+  
+  <p>Sum: {{sum}}</p>
+  <p>Product: {{product}}</p>
+
+  <script>
+    angular.module('mathApp', [])
+      .service('mathService', function() {
+        this.add = (a, b) => a + b;
+        this.multiply = (a, b) => a * b;
+      })
+      .controller('MathController', function($scope, mathService) {
+        $scope.add = () => $scope.sum = mathService.add($scope.num1, $scope.num2);
+        $scope.multiply = () => $scope.product = mathService.multiply($scope.num1, $scope.num2);
+      });
+  </script>
+</body>
+</html>
